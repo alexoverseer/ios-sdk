@@ -1,7 +1,6 @@
 import Foundation
 
-@objcMembers public class Schedule: RecurringEntity {
-
+public class Schedule: RecurringEntity<Schedule> {
     /// The schedule's amount
     public var amount: Decimal?
     /// The date/time the schedule was cancelled.

@@ -1,16 +1,20 @@
 import Foundation
 
-@objcMembers public class ServicesContainer: NSObject {
+/// Maintains references to the currently configured gateway/device objects
+/// The public `ServicesContainer.configure` method is the only call
+/// required of the integrator to configure the SDK's various gateway/device
+/// interactions. The configured gateway/device objects are handled
+/// internally by exposed APIs throughout the SDK.
+public class ServicesContainer {
 
     public static let shared = ServicesContainer()
 
     private var secure3dProviders: [Secure3dVersion: Secure3dProvider]
-    public var gateway: PaymentGateway?
-    public var recurring: IRecurringService?
+    var gateway: PaymentGateway?
+    var recurring: IRecurringService?
     var reportingService: ReportingService?
 
-    public required init(gateway: PaymentGateway? = nil) {
-        self.gateway = gateway
+    public init() {
         self.secure3dProviders = [Secure3dVersion: Secure3dProvider]()
     }
 
@@ -29,16 +33,17 @@ import Foundation
     }
 
     public func configure(config: ServiceConfig) throws {
-        try config.validate()
+        config.validate()
         gateway = nil
-        if !config.merchantId.isNilOrEmpty {
-            if config.serviceUrl.isNilOrEmpty {
-                if config.environment == .test {
-                    config.serviceUrl = ServiceEndpoints.globalEcomTest.rawValue
-                } else {
-                    config.serviceUrl = ServiceEndpoints.globalEcomProduction.rawValue
-                }
-            }
+//        if !config.merchantId.isNilOrEmpty {
+//            if config.serviceUrl.isNilOrEmpty {
+//                if config.environment == .test {
+//                    config.serviceUrl = ServiceEndpoints.globalEcomTest.rawValue
+//                } else {
+//                    config.serviceUrl = ServiceEndpoints.globalEcomProduction.rawValue
+//                }
+//            }
+        
 //            $gateway = new RealexConnector();
 //            $gateway->accountId = $config->accountId;
 //            $gateway->channel = $config->channel;
@@ -75,15 +80,17 @@ import Foundation
 //
 //                static::$instance->setSecure3dProvider(Secure3dVersion::TWO, $secure3d2);
 //            }
-        } else {
-            if config.serviceUrl.isNilOrEmpty && !config.secretApiKey.isNilOrEmpty {
-                let env = config.secretApiKey?.components(separatedBy: "_")[safe: 1]
-                if let env = env, env == "prod" {
-                    config.serviceUrl = ServiceEndpoints.porticoProduction.rawValue
-                } else {
-                    config.serviceUrl = ServiceEndpoints.porticoTest.rawValue
-                }
-            }
+
+
+//        } else {
+//            if config.serviceUrl.isNilOrEmpty && !config.secretApiKey.isNilOrEmpty {
+//                let env = config.secretApiKey?.components(separatedBy: "_")[safe: 1]
+//                if let env = env, env == "prod" {
+//                    config.serviceUrl = ServiceEndpoints.porticoProduction.rawValue
+//                } else {
+//                    config.serviceUrl = ServiceEndpoints.porticoTest.rawValue
+//                }
+//            }
 
 //            $gateway = new PorticoConnector();
 //            $gateway->siteId = $config->siteId;
@@ -116,18 +123,18 @@ import Foundation
 //            $recurring->curlOptions = $config->curlOptions;
 //
 //            static::$instance = new static($gateway, $recurring);
-        }
+//        }
     }
 
     /// Gets the configured gateway connector
     /// - Returns: PaymentGateway?
-    public func getClient() -> PaymentGateway? {
+    func getClient() -> PaymentGateway? {
         return gateway
     }
 
     /// Gets the configured recurring gateway connector
     /// - Returns: IRecurringService?
-    public func getRecurringClient() -> IRecurringService? {
+    func getRecurringClient() -> IRecurringService? {
         return recurring
     }
 
@@ -142,3 +149,20 @@ import Foundation
         return provider
     }
 }
+
+//public class ServicesContainer {
+//    private var configurations = [String: ConfiguredServices]()
+//
+//    public static let shared = ServicesContainer()
+//
+//    public static func configure(config: ServiceConfig) {
+//        config.validate()
+//    }
+//
+//    public static func configureService<T: Configuration>(config: T) {
+//        if !config.validated {
+//            config.validate()
+//        }
+//        let cs = shared.get
+//    }
+//}
