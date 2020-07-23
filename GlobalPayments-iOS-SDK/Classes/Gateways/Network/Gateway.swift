@@ -21,7 +21,7 @@ class Gateway {
                      data: String? = nil,
                      queryStringParams: [String: String]? = nil,
                      contentType: String? = nil,
-                     completion: @escaping (GatewayResponse?, Error?) -> Void) {
+                     completion: @escaping (GatewayResponse?, NetworkError?) -> Void) {
 
         guard let url = generateURL(serviceUrl: serviceUrl, endpoint: endpoint, queryStringParams: queryStringParams) else {
             completion(nil, NetworkError.canNotGenerateURL)
