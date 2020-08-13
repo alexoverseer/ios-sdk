@@ -1,21 +1,21 @@
 import Foundation
 
 /// Used to create charges, verifies, etc. for the supported payment method types.
-public class AuthorizationBuilder: TransactionBuilder<Transaction> {
+@objcMembers public class AuthorizationBuilder: TransactionBuilder<Transaction> {
     var accountType: AccountType?
     var alias: String?
     var aliasAction: AliasAction?
     var allowDuplicates: Bool?
-    var allowPartialAuth: Bool?
-    var amount: Decimal?
+    var allowPartialAuth: Bool = false
+    var amount: NSDecimalNumber?
     var amountEstimated: Bool?
-    var authAmount: Decimal?
+    var authAmount: NSDecimalNumber?
     var autoSubstantiation: AutoSubstantiation?
     var balanceInquiryType: InquiryType?
     var billingAddress: Address?
-    var cashBackAmount: Decimal?
+    var cashBackAmount: NSDecimalNumber?
     var clientTransactionId: String?
-    var convenienceAmount: Decimal?
+    var convenienceAmount: NSDecimalNumber?
     var commercialRequest: Bool?
     var currency: String?
     var customerId: String?
@@ -28,10 +28,12 @@ public class AuthorizationBuilder: TransactionBuilder<Transaction> {
     var decisionManager: DecisionManager?
     var dynamicDescriptor: String?
     var ecommerceInfo: EcommerceInfo?
+    var emvFallbackCondition: EmvFallbackCondition?
+    var emvLastChipRead: EmvLastChipRead?
     var emvChipCondition: EmvChipCondition?
     var fraudFilterMode: FraudFilterMode = .none
-    var gratuity: Decimal?
-    var shippingAmt: Decimal?
+    var gratuity: NSDecimalNumber?
+    var shippingAmt: NSDecimalNumber?
     var hostedPaymentData: HostedPaymentData?
     var invoiceNumber: String?
     var lodgingData: LodgingData?
@@ -53,11 +55,18 @@ public class AuthorizationBuilder: TransactionBuilder<Transaction> {
     var supplementaryData: [String: [String]]?
     var tagData: String?
     var timestamp: String?
+    var surchargeAmount: NSDecimalNumber?
+
+    var hasEmvFallbackData: Bool {
+        return emvFallbackCondition != nil ||
+            emvLastChipRead != nil ||
+            !paymentApplicationVersion.isNilOrEmpty
+    }
 
     /// Set the request amount
     /// - Parameter amount: Request amount
     /// - Returns: AuthorizationBuilder
-    public func withAmount(_ amount: Decimal?) -> AuthorizationBuilder {
+    public func withAmount(_ amount: NSDecimalNumber?) -> AuthorizationBuilder {
         self.amount = amount
         return self
     }
@@ -122,7 +131,7 @@ public class AuthorizationBuilder: TransactionBuilder<Transaction> {
     /// This is a specialized field. In most cases, `Authorization.withAmount` should be used.
     /// - Parameter authAmount: The authorization amount
     /// - Returns: AuthorizationBuilder
-    public func withAuthAmount(_ authAmount: Decimal?) -> AuthorizationBuilder {
+    public func withAuthAmount(_ authAmount: NSDecimalNumber?) -> AuthorizationBuilder {
         self.authAmount = authAmount
         return self
     }
@@ -146,7 +155,7 @@ public class AuthorizationBuilder: TransactionBuilder<Transaction> {
     /// This is a specialized field for debit or EBT transactions.
     /// - Parameter cashBack: The desired cash back amount
     /// - Returns: AuthorizationBuilder
-    public func withCashBack(_ cashBack: Decimal?) -> AuthorizationBuilder {
+    public func withCashBack(_ cashBack: NSDecimalNumber?) -> AuthorizationBuilder {
         self.cashBackAmount = cashBack
         return self
     }
@@ -264,7 +273,7 @@ public class AuthorizationBuilder: TransactionBuilder<Transaction> {
     /// This value is information only and does not affect the authorization amount.
     /// - Parameter gratuity: This value is information only and does not affect the authorization amount.
     /// - Returns: AuthorizationBuilder
-    public func withGratuity(_ gratuity: Decimal?) -> AuthorizationBuilder {
+    public func withGratuity(_ gratuity: NSDecimalNumber?) -> AuthorizationBuilder {
         self.gratuity = gratuity
         return self
     }
@@ -272,7 +281,7 @@ public class AuthorizationBuilder: TransactionBuilder<Transaction> {
     /// Sets the Convenience amount; where applicable.
     /// - Parameter convenienceAmount: The Convenience amount
     /// - Returns: AuthorizationBuilder
-    public func withConvenienceAmount(_ convenienceAmount: Decimal?) -> AuthorizationBuilder {
+    public func withConvenienceAmount(_ convenienceAmount: NSDecimalNumber?) -> AuthorizationBuilder {
         self.convenienceAmount = convenienceAmount
         return self
     }
@@ -280,7 +289,7 @@ public class AuthorizationBuilder: TransactionBuilder<Transaction> {
     /// Sets the Shipping amount; where applicable.
     /// - Parameter shippingAmt: The Shipping amount
     /// - Returns: AuthorizationBuilder
-    public func withShippingAmt(_ shippingAmt: Decimal?) -> AuthorizationBuilder {
+    public func withShippingAmt(_ shippingAmt: NSDecimalNumber?) -> AuthorizationBuilder {
         self.shippingAmt = shippingAmt
         return self
     }
@@ -326,7 +335,7 @@ public class AuthorizationBuilder: TransactionBuilder<Transaction> {
     /// The merchant is required to supply this value as obtained when calling the issuing bank for the authorization.
     /// - Parameter offlineAuthCode: The offline authorization code
     /// - Returns: AuthorizationBuilder
-    public func withOfflineAuthCode(_ offlineAuthCode: String) -> AuthorizationBuilder {
+    public func withOfflineAuthCode(_ offlineAuthCode: String?) -> AuthorizationBuilder {
         self.offlineAuthCode = offlineAuthCode
         self.transactionModifier = .offline
         return self
@@ -358,7 +367,7 @@ public class AuthorizationBuilder: TransactionBuilder<Transaction> {
     /// Sets the transaction's payment method.
     /// - Parameter paymentMethod: The payment method
     /// - Returns: AuthorizationBuilder
-    public func withPaymentMethod(_ paymentMethod: PaymentMethod) -> AuthorizationBuilder {
+    public func withPaymentMethod(_ paymentMethod: PaymentMethod?) -> AuthorizationBuilder {
         self.paymentMethod = paymentMethod
         if let paymentMethod = paymentMethod as? EBTCardData,
             paymentMethod.serialNumber != nil {
@@ -472,7 +481,7 @@ public class AuthorizationBuilder: TransactionBuilder<Transaction> {
     /// Lodging data information for Portico
     /// - Parameter lodgingData: The lodging data
     /// - Returns: AuthorizationBuilder
-    func withLodgingData(_ lodgingData: LodgingData) -> AuthorizationBuilder {
+    public func withLodgingData(_ lodgingData: LodgingData) -> AuthorizationBuilder {
         self.lodgingData = lodgingData
         return self
     }
@@ -482,41 +491,60 @@ public class AuthorizationBuilder: TransactionBuilder<Transaction> {
         return self
     }
 
-    func withAlias(action: AliasAction, value: String) -> AuthorizationBuilder {
+    public func withAlias(action: AliasAction, value: String) -> AuthorizationBuilder {
         self.alias = value
         self.aliasAction = action
         return self
     }
 
-    func withBalanceInquiryType(_ balanceInquiryType: InquiryType) -> AuthorizationBuilder {
+    public func withBalanceInquiryType(_ balanceInquiryType: InquiryType) -> AuthorizationBuilder {
         self.balanceInquiryType = balanceInquiryType
         return self
     }
 
-    func withReplacementCard(_ replacementCard: GiftCard) -> AuthorizationBuilder {
+    public func withReplacementCard(_ replacementCard: GiftCard?) -> AuthorizationBuilder {
         self.replacementCard = replacementCard
         return self
     }
 
-    func withModifier(_ transactionModifier: TransactionModifier) -> AuthorizationBuilder {
+    public func withModifier(_ transactionModifier: TransactionModifier) -> AuthorizationBuilder {
         self.transactionModifier = transactionModifier
+        return self
+    }
+
+    /// Sets the surcharge amount; where applicable.
+    /// - Parameter surchargeAmount: The surcharge amount
+    /// - Returns: AuthorizationBuilder
+    public func withSurchargeAmount(_ surchargeAmount: NSDecimalNumber?) -> AuthorizationBuilder {
+        self.surchargeAmount = surchargeAmount
         return self
     }
 
     /// Executes the authorization builder against the gateway.
     /// - Returns: Transaction
-    public override func execute(completion: ((Transaction?) -> Void)?) {
-        super.execute(completion: nil)
-        let client = ServicesContainer.shared.getClient()
-        client?.processAuthorization(self, completion: completion)
+    public override func execute(configName: String = "default",
+                                 completion: ((Transaction?, Error?) -> Void)?) {
+
+        super.execute(configName: configName) { _, error in
+            if let error = error {
+                completion?(nil, error)
+                return
+            }
+            do {
+                let client = try ServicesContainer.shared.client(configName: configName)
+                client.processAuthorization(self, completion: completion)
+            } catch {
+                completion?(nil, error)
+            }
+        }
     }
 
-    public func serialize() throws -> String? {
+    public func serialize(configName: String = "default") throws -> String? {
         transactionModifier = .hostedRequest
         super.execute(completion: nil)
 
-        let client = ServicesContainer.shared.getClient()
-        if let client = client, client.supportsHostedPayments {
+        let client = try ServicesContainer.shared.client(configName: configName)
+        if client.supportsHostedPayments {
             return client.serializeRequest(self)
         }
         throw UnsupportedTransactionException.generic(message: "You current gateway does not support hosted payments.")
@@ -562,10 +590,6 @@ public class AuthorizationBuilder: TransactionBuilder<Transaction> {
         validations.of(transactionType: .replace)
             .check(propertyName: "replacementCard")?.isNotNil()
 
-        validations.of(transactionType: [.auth, .sale])
-            .with(modifier: .encryptedMobile)
-            .check(propertyName: "paymentMethod")?.isNotNil()
-
         validations.of(paymentMethodType: .ach)
             .check(propertyName: "billingAddress")?.isNotNil()
 
@@ -573,13 +597,9 @@ public class AuthorizationBuilder: TransactionBuilder<Transaction> {
             .when(propertyName: "reversalReasonCode")?.isNotNil()?
             .check(propertyName: "transactionType")?.isEqualTo(expected: TransactionType.reversal)
 
-        validations.of(paymentMethodType: [.debit, .credit])
-            .when(propertyName: "emvChipCondition")?.isNotNil()?
-            .check(propertyName: "tagData")?.isNil()
-
-        validations.of(paymentMethodType: [.debit, .credit])
-            .when(propertyName: "tagData")?.isNotNil()?
-            .check(propertyName: "emvChipCondition")?.isNil()
+        validations.of(transactionType: [.auth, .sale])
+            .with(modifier: .encryptedMobile)
+            .check(propertyName: "paymentMethod")?.isNotNil()
 
         validations.of(paymentMethodType: .recurring)
             .check(propertyName: "shippingAmt")?.isNil()

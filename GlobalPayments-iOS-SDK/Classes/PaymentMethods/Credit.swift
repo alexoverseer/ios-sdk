@@ -23,10 +23,10 @@ public class Credit: NSObject, PaymentMethod, Encryptable, Tokenizable, Chargeab
     /// - Parameters:
     ///   - amount: The amount of the transaction
     /// - Returns: AuthorizationBuilder
-    public func authorize(amount: Decimal = .zero,
+    public func authorize(amount: NSDecimalNumber? = nil,
                           isEstimated: Bool = false) -> AuthorizationBuilder {
         return AuthorizationBuilder(transactionType: .auth, paymentMethod: self)
-            .withAmount(amount)
+            .withAmount(amount ?? threeDSecure?.amount)
             .withCurrency(threeDSecure?.currency)
             .withOrderId(threeDSecure?.orderId)
             .withAmountEstimated(isEstimated)
@@ -35,7 +35,7 @@ public class Credit: NSObject, PaymentMethod, Encryptable, Tokenizable, Chargeab
     /// Creates a charge (sale) against the payment method.
     /// - Parameter amount: The amount of the transaction
     /// - Returns: AuthorizationBuilder
-    public func charge(amount: Decimal? = nil) -> AuthorizationBuilder {
+    public func charge(amount: NSDecimalNumber? = nil) -> AuthorizationBuilder {
         return AuthorizationBuilder(transactionType: .sale, paymentMethod: self)
             .withAmount(amount)
             .withCurrency(threeDSecure?.currency)
@@ -45,7 +45,7 @@ public class Credit: NSObject, PaymentMethod, Encryptable, Tokenizable, Chargeab
     /// Adds value to to a payment method.
     /// - Parameter amount: The amount of the transaction
     /// - Returns: AuthorizationBuilder
-    public func addValue(amount: Decimal? = nil) -> AuthorizationBuilder {
+    public func addValue(amount: NSDecimalNumber? = nil) -> AuthorizationBuilder {
         return AuthorizationBuilder(transactionType: .addValue, paymentMethod: self)
             .withAmount(amount)
     }
@@ -61,7 +61,7 @@ public class Credit: NSObject, PaymentMethod, Encryptable, Tokenizable, Chargeab
     /// Refunds the payment method.
     /// - Parameter amount: The amount of the transaction
     /// - Returns: AuthorizationBuilder
-    public func refund(amount: Decimal? = nil) -> AuthorizationBuilder {
+    public func refund(amount: NSDecimalNumber? = nil) -> AuthorizationBuilder {
         return AuthorizationBuilder(transactionType: .refund, paymentMethod: self)
             .withAmount(amount)
     }
@@ -69,7 +69,7 @@ public class Credit: NSObject, PaymentMethod, Encryptable, Tokenizable, Chargeab
     /// Reverses a previous transaction against the payment method.
     /// - Parameter amount: The amount of the transaction
     /// - Returns: AuthorizationBuilder
-    public func reverse(amount: Decimal?) -> AuthorizationBuilder {
+    public func reverse(amount: NSDecimalNumber?) -> AuthorizationBuilder {
         return AuthorizationBuilder(transactionType: .reversal, paymentMethod: self)
             .withAmount(amount)
     }
@@ -80,39 +80,47 @@ public class Credit: NSObject, PaymentMethod, Encryptable, Tokenizable, Chargeab
         return AuthorizationBuilder(transactionType: .verify, paymentMethod: self)
     }
 
-    public func tokenize(completion: ((String?) -> Void)?) {
+    public func tokenize(completion: ((String?, Error?) -> Void)?) {
         AuthorizationBuilder(transactionType: .verify, paymentMethod: self)
             .withRequestMultiUseToken(true)
-            .execute { transaction in
-                completion?(transaction?.token)
+            .execute { transaction, error in
+                completion?(transaction?.token, error)
         }
     }
 
     /// Updates the token expiry date with the values proced to the card object
     /// - Throws: BuilderException
     /// - Returns: boolean value indicating success/failure
-    public func updateTokenExpiry(completion: ((Bool) -> Void)?) throws {
+    public func updateTokenExpiry(completion: ((Bool?, Error?) -> Void)?) throws {
         if token.isNilOrEmpty {
             throw BuilderException.generic(message: "Token cannot be null")
         }
         ManagementBuilder(transactionType: .tokenUpdate)
             .withPaymentMethod(self)
-            .execute { transaction in
-                completion?(transaction != nil)
+            .execute { transaction, error in
+                if let error = error {
+                    completion?(nil, error)
+                    return
+                }
+                completion?(transaction != nil, nil)
         }
     }
 
     /// Deletes the token associated with the current card object
     /// - Throws: BuilderException
     /// - Returns: boolean value indicating success/failure
-    public func deleteToken(completion: ((Bool) -> Void)?) throws {
+    public func deleteToken(completion: ((Bool?, Error?) -> Void)?) throws {
         if token.isNilOrEmpty {
             throw BuilderException.generic(message: "Token cannot be null")
         }
         ManagementBuilder(transactionType: .tokenDelete)
             .withPaymentMethod(self)
-            .execute { transaction in
-                completion?(transaction != nil)
+            .execute { transaction, error in
+                if let error = error {
+                    completion?(nil, error)
+                    return
+                }
+                completion?(transaction != nil, nil)
         }
     }
 }

@@ -13,19 +13,19 @@ public class EBT: NSObject, PaymentMethod, Balanceable, Chargeable, Refundable, 
             .withAmount(.zero)
     }
 
-    public func benefitWithdrawal(amount: Decimal?) -> AuthorizationBuilder {
+    public func benefitWithdrawal(amount: NSDecimalNumber?) -> AuthorizationBuilder {
         return AuthorizationBuilder(transactionType: .benefitWithdrawal, paymentMethod: self)
-            .withAmount(.zero)
+            .withAmount(amount)
             .withCashBack(.zero)
     }
 
-    public func charge(amount: Decimal? = nil) -> AuthorizationBuilder {
+    public func charge(amount: NSDecimalNumber? = nil) -> AuthorizationBuilder {
         return AuthorizationBuilder(transactionType: .sale, paymentMethod: self)
-            .withAmount(.zero)
+            .withAmount(amount)
     }
     
-    public func refund(amount: Decimal? = nil) -> AuthorizationBuilder {
+    public func refund(amount: NSDecimalNumber? = nil) -> AuthorizationBuilder {
         return AuthorizationBuilder(transactionType: .refund, paymentMethod: self)
-            .withAmount(.zero)
+            .withAmount(amount)
     }
 }

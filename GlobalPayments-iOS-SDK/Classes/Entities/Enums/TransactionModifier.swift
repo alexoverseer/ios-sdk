@@ -1,11 +1,12 @@
 import Foundation
 
-@objc public enum TransactionModifier: Int {
+public enum TransactionModifier {
     case none
     case incremental
     case additional
     case offline
     case levelII
+    case levelIII
     case fraudDecline
     case chipDecline
     case cashBack

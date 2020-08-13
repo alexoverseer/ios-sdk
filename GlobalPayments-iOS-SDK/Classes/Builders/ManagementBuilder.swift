@@ -1,11 +1,11 @@
 import Foundation
 
 /// Used to follow up transactions for the supported payment method types.
-public class ManagementBuilder: TransactionBuilder<Transaction> {
+@objcMembers public class ManagementBuilder: TransactionBuilder<Transaction> {
     /// Request amount
-    var amount: Decimal?
+    var amount: NSDecimalNumber?
     /// Request authorization amount
-    var authAmount: Decimal?
+    var authAmount: NSDecimalNumber?
     var authorizationCode: String? {
         guard let paymentMethod = paymentMethod as? TransactionReference else {
             return nil
@@ -18,30 +18,45 @@ public class ManagementBuilder: TransactionBuilder<Transaction> {
         }
         return paymentMethod.clientTransactionId
     }
+    var commercialData: CommercialData?
     /// Request currency
     var currency: String?
     var customerId: String?
     var managementBuilderDescription: String?
     /// Request gratuity
-    var gratuity: Decimal?
+    var gratuity: NSDecimalNumber?
     /// Request purchase order number
     var poNumber: String?
-    var reasonCode: String?
     /// Request tax amount
-    var taxAmount: Decimal?
+    var taxAmount: NSDecimalNumber?
     var taxType: TaxType?
     /// Previous request's transaction reference
     var alternativePaymentType: String?
+    var orderId: String? {
+        guard let paymentMethod = paymentMethod as? TransactionReference else {
+            return nil
+        }
+        return paymentMethod.orderId
+    }
     var payerAuthenticationResponse: String?
+    var reasonCode: ReasonCode?
+    var supplementaryData: [String: [String]]?
     var multiCapturePaymentCount: Int?
     var multiCaptureSequence: Int?
     var invoiceNumber: String?
     var lodgingData: LodgingData?
+    var transactionId: String? {
+        guard let paymentMethod = paymentMethod as? TransactionReference else {
+            return nil
+        }
+        return paymentMethod.transactionId
+    }
+    var voidReason: VoidReason?
 
     /// Sets the current transaction's amount.
     /// - Parameter amount: The amount
     /// - Returns: ManagementBuilder
-    public func withAmount(_ amount: Decimal?) -> ManagementBuilder {
+    public func withAmount(_ amount: NSDecimalNumber?) -> ManagementBuilder {
         self.amount = amount
         return self
     }
@@ -49,7 +64,7 @@ public class ManagementBuilder: TransactionBuilder<Transaction> {
     /// Sets the current transaction's authorized amount; where applicable.
     /// - Parameter authAmount: The authorized amount
     /// - Returns: ManagementBuilder
-    public func withAuthAmount(_ authAmount: Decimal?) -> ManagementBuilder {
+    public func withAuthAmount(_ authAmount: NSDecimalNumber?) -> ManagementBuilder {
         self.authAmount = authAmount
         return self
     }
@@ -61,6 +76,16 @@ public class ManagementBuilder: TransactionBuilder<Transaction> {
         self.multiCapture = true
         self.multiCaptureSequence = sequence
         self.multiCapturePaymentCount = paymentCount
+        return self
+    }
+
+    public func withCommercialData(_ commercialData: CommercialData) -> ManagementBuilder {
+        self.commercialData = commercialData
+        if commercialData.commercialIndicator == .level_II {
+            transactionModifier = .levelII
+        } else {
+            transactionModifier = .levelIII
+        }
         return self
     }
 
@@ -92,7 +117,7 @@ public class ManagementBuilder: TransactionBuilder<Transaction> {
     /// Sets the gratuity amount; where applicable.
     /// - Parameter gratuity: This value is information only and does not affect the authorization amount.
     /// - Returns: ManagementBuilder
-    public func withGratuity(_ gratuity: Decimal?) -> ManagementBuilder {
+    public func withGratuity(_ gratuity: NSDecimalNumber?) -> ManagementBuilder {
         self.gratuity = gratuity
         return self
     }
@@ -115,7 +140,23 @@ public class ManagementBuilder: TransactionBuilder<Transaction> {
         return self
     }
 
-    func withModifier(_ modifier: TransactionModifier) -> ManagementBuilder {
+    /// Sets the reason code for the transaction.
+    /// - Parameter reasonCode: The reason code
+    /// - Returns: ManagementBuilder
+    public func withReasonCode(_ reasonCode: ReasonCode?) -> ManagementBuilder {
+        self.reasonCode = reasonCode
+        return self
+    }
+
+    public func withSupplementaryData(type: String, values: [String]) -> ManagementBuilder {
+        if supplementaryData == nil {
+            supplementaryData = [String: [String]]()
+        }
+        supplementaryData?[type] = values
+        return self
+    }
+
+    public func withModifier(_ modifier: TransactionModifier) -> ManagementBuilder {
         self.transactionModifier = modifier
         return self
     }
@@ -128,13 +169,29 @@ public class ManagementBuilder: TransactionBuilder<Transaction> {
         return self
     }
 
-    public override func execute(completion: ((Transaction?) -> Void)?) {
-        super.execute(completion: nil)
-        ServicesContainer.shared
-            .getClient()?
-            .manageTransaction(self, completion: { transaction in
-                completion?(transaction)
-            })
+    public func withVoidReason(_ voidReason: VoidReason?) -> ManagementBuilder {
+        self.voidReason = voidReason
+        return self
+    }
+
+    public override func execute(configName: String = "default",
+                                 completion: ((Transaction?, Error?) -> Void)?) {
+
+        super.execute(configName: configName) { _, error in
+            if let error = error {
+                completion?(nil, error)
+                return
+            }
+            do {
+                try ServicesContainer.shared
+                    .client(configName: configName)
+                    .manageTransaction(self, completion: { transaction in
+                        completion?(transaction, nil)
+                    })
+            } catch {
+                completion?(nil, error)
+            }
+        }
     }
 
     public override func setupValidations() {
@@ -160,6 +217,19 @@ public class ManagementBuilder: TransactionBuilder<Transaction> {
             .check(propertyName: "paymentMethod")?.isInstanceOf(type: CreditCardData.self)
 
         validations.of(transactionType: [.capture, .edit, .hold, .release, .tokenUpdate, .tokenDelete, .verifySignature, .refund])
-            .check(propertyName: "voidReason")?.isNotNil()
+            .check(propertyName: "voidReason")?.isNil()
+    }
+}
+
+extension ManagementBuilder: CustomReflectable {
+
+    public var customMirror: Mirror {
+        return Mirror(self, children: [
+            "authorizationCode": authorizationCode as Any,
+            "clientTransactionId": transactionId as Any,
+            "orderId": orderId as Any,
+            "transactionId": transactionId as Any
+            ]
+        )
     }
 }

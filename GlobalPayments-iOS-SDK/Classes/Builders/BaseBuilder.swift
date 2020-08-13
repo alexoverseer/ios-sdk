@@ -1,6 +1,6 @@
 import Foundation
 
-public class BaseBuilder<TResult>: NSObject {
+@objcMembers public class BaseBuilder<TResult>: NSObject {
 
     let validations: Validations
 
@@ -10,9 +10,14 @@ public class BaseBuilder<TResult>: NSObject {
         setupValidations()
     }
 
-    public func execute(completion: ((TResult?) -> Void)?){
-        try! validations.validate(builder: self)
-        completion?(nil)
+    public func execute(configName: String = "default",
+                        completion: ((TResult?, Error?) -> Void)?) {
+        do {
+            try validations.validate(builder: self)
+            completion?(nil, nil)
+        } catch {
+            completion?(nil, error)
+        }
     }
 
     public func setupValidations() { }

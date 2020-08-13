@@ -27,10 +27,12 @@ public class JsonEncoders {
 }
 
 public class JsonDoc {
-    var dict = [String: Any]()
+    var dict: [String: Any]
     var encoder: RequestEncoder?
 
-    init(encoder: RequestEncoder? = nil) {
+    init(dict: [String: Any] = [String: Any](),
+         encoder: RequestEncoder? = nil) {
+        self.dict = dict
         self.encoder = encoder
     }
 
@@ -43,8 +45,13 @@ public class JsonDoc {
         return self
     }
 
-    public func set(for key: String, value: String, force: Bool = false) -> JsonDoc {
+    @discardableResult public func set(for key: String, value: String?, force: Bool = false) -> JsonDoc {
         dict[key] = encoder != nil ? encoder?.encode(value: value) : value
+        return self
+    }
+
+    @discardableResult public func set(for key: String, doc: JsonDoc?) -> JsonDoc {
+        dict[key] = doc
         return self
     }
 
@@ -117,7 +124,7 @@ public class JsonDoc {
 
     public static func parseSingleValue(_ json: String,
                                         _ name: String,
-                                        _ encoder: RequestEncoder?) -> Any? {
+                                        _ encoder: RequestEncoder? = nil) -> Any? {
         let doc = parse(json, encoder: encoder)
 
         return doc?.get(valueFor: name)
@@ -141,7 +148,8 @@ public class JsonDoc {
                 values[key] = jsonDict[key]
             }
         }
-        return nil
+
+        return JsonDoc(dict: values, encoder: encoder)
     }
 
     private static func parseObjectArray(_ array: [Any],

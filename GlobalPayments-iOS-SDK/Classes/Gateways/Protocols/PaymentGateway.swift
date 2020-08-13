@@ -8,7 +8,7 @@ protocol PaymentGateway {
     ///   - builder:  The transaction's builder
     ///   - completion: Transaction
     func processAuthorization(_ builder: AuthorizationBuilder,
-                              completion: ((Transaction?) -> Void)?)
+                              completion: ((Transaction?, Error?) -> Void)?)
     /// Serializes and executes follow up transactions
     /// - Parameters:
     ///   - builder: The transaction's builder
@@ -16,5 +16,4 @@ protocol PaymentGateway {
     func manageTransaction(_ builder: ManagementBuilder,
                            completion: ((Transaction?) -> Void)?)
     func serializeRequest(_ builder: AuthorizationBuilder) -> String?
-    func processReport<T>(_ builder: ReportBuilder<T>) throws
 }

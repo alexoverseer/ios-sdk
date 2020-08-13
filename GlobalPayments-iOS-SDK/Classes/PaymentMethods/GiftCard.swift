@@ -56,7 +56,7 @@ public class GiftCard: NSObject, PaymentMethod, PrePaid, Balanceable, Reversable
     /// Activates an existing gift card.
     /// - Parameter amount: The amount of the transaction
     /// - Returns: AuthorizationBuilder
-    public func activate(amount: Decimal?) -> AuthorizationBuilder {
+    public func activate(amount: NSDecimalNumber?) -> AuthorizationBuilder {
         return AuthorizationBuilder(transactionType: .activate, paymentMethod: self)
             .withAmount(amount)
     }
@@ -64,7 +64,7 @@ public class GiftCard: NSObject, PaymentMethod, PrePaid, Balanceable, Reversable
     /// Adds value to to an activated gift card.
     /// - Parameter amount: The amount of the transaction
     /// - Returns: AuthorizationBuilder
-    public func addValue(amount: Decimal? = nil) -> AuthorizationBuilder {
+    public func addValue(amount: NSDecimalNumber? = nil) -> AuthorizationBuilder {
         return AuthorizationBuilder(transactionType: .addValue, paymentMethod: self)
             .withAmount(amount)
     }
@@ -79,7 +79,7 @@ public class GiftCard: NSObject, PaymentMethod, PrePaid, Balanceable, Reversable
     /// Reverses a previous charge against an activated gift card.
     /// - Parameter amount: The amount of the transaction
     /// - Returns: AuthorizationBuilder
-    public func reverse(amount: Decimal? = nil) -> AuthorizationBuilder {
+    public func reverse(amount: NSDecimalNumber? = nil) -> AuthorizationBuilder {
         return AuthorizationBuilder(transactionType: .reversal, paymentMethod: self)
             .withAmount(amount)
     }
@@ -87,7 +87,7 @@ public class GiftCard: NSObject, PaymentMethod, PrePaid, Balanceable, Reversable
     /// Creates a charge (sale) transaction against an activated gift card.
     /// - Parameter amount: The amount of the transaction
     /// - Returns: AuthorizationBuilder
-    public func charge(amount: Decimal? = nil) -> AuthorizationBuilder {
+    public func charge(amount: NSDecimalNumber? = nil) -> AuthorizationBuilder {
         return AuthorizationBuilder(transactionType: .sale, paymentMethod: self)
             .withAmount(amount)
     }
@@ -109,7 +109,7 @@ public class GiftCard: NSObject, PaymentMethod, PrePaid, Balanceable, Reversable
     /// transferring the balance from the old card to the new card in the process.
     /// - Parameter newCard: The replacement gift card
     /// - Returns: AuthorizationBuilder
-    public func replaceWith(newCard: GiftCard) -> AuthorizationBuilder {
+    public func replaceWith(newCard: GiftCard?) -> AuthorizationBuilder {
         return AuthorizationBuilder(transactionType: .replace, paymentMethod: self)
             .withReplacementCard(newCard)
     }
@@ -117,7 +117,7 @@ public class GiftCard: NSObject, PaymentMethod, PrePaid, Balanceable, Reversable
     /// Adds rewards points to an activated gift card.
     /// - Parameter amount: The amount of the transaction
     /// - Returns: AuthorizationBuilder
-    public func rewards(amount: Decimal? = nil) -> AuthorizationBuilder {
+    public func rewards(amount: NSDecimalNumber? = nil) -> AuthorizationBuilder {
         return AuthorizationBuilder(transactionType: .reward, paymentMethod: self)
             .withAmount(amount)
     }
@@ -126,16 +126,16 @@ public class GiftCard: NSObject, PaymentMethod, PrePaid, Balanceable, Reversable
     /// - Parameter phoneNumber: The phone number to be used as the alias
     /// - Returns: GiftCard
     public static func create(with phoneNumber: String,
-                              completion: ((GiftCard?) -> Void)?) {
+                              completion: ((GiftCard?, Error?) -> Void)?) {
 
         let card = GiftCard()
         AuthorizationBuilder(transactionType: .alias, paymentMethod: card)
             .withAlias(action: .create, value: phoneNumber)
-            .execute { transaction in
+            .execute { transaction, error in
                 if transaction?.responseCode == "00" {
-                    completion?(transaction?.giftCard)
+                    completion?(transaction?.giftCard, nil)
                 } else {
-                    completion?(nil)
+                    completion?(nil, error)
                 }
         }
     }

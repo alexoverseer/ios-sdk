@@ -1,6 +1,6 @@
 import Foundation
 
-public class RecurringBuilder<TResult>: TransactionBuilder<TResult> {
+@objcMembers public class RecurringBuilder<TResult>: TransactionBuilder<TResult> {
 
     var key: String?
     var orderId: String?
@@ -22,10 +22,23 @@ public class RecurringBuilder<TResult>: TransactionBuilder<TResult> {
     }
 
     /// Executes the builder against the gateway.
-    public override func execute(completion: ((TResult?) -> Void)?) {
-        super.execute(completion: nil)
-        let client = ServicesContainer.shared.getRecurringClient()
-        client?.processRecurring(builder: self, completion: completion)
+    public override func execute(configName: String = "default",
+                                 completion: ((TResult?, Error?) -> Void)?) {
+
+        super.execute(configName: configName) { _, error in
+            if let error = error {
+                completion?(nil, error)
+                return
+            }
+            do {
+                let client = try ServicesContainer.shared.recurringClient(configName: configName)
+                client.processRecurring(builder: self, completion: { result in
+                    completion?(result, nil)
+                })
+            } catch {
+                completion?(nil, error)
+            }
+        }
     }
 
     public override func setupValidations() {

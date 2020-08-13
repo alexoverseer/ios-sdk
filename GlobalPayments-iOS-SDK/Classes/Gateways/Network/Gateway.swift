@@ -42,7 +42,7 @@ class Gateway {
         }
 
         let task = session.dataTask(with: request,
-                                    completionHandler: { [weak self] (data, urlResponse, error) in
+                                    completionHandler: { [weak self] data, urlResponse, error in
                                         guard let data = data,
                                             let responseString = String(data: data, encoding: String.Encoding.utf8) else {
                                                 completion(nil, NetworkError.noData)

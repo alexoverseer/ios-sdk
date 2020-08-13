@@ -37,7 +37,7 @@ public class CreditCardData: Credit, CardData {
         return month + year
     }
 
-    public func verifyEnrolled(amount: Decimal,
+    public func verifyEnrolled(amount: NSDecimalNumber,
                                currency: String,
                                orderId: String? = nil,
                                completion: ((Bool) -> Void)?) {
@@ -45,7 +45,7 @@ public class CreditCardData: Credit, CardData {
             .withAmount(amount)
             .withCurrency(currency)
             .withOrderId(orderId)
-            .execute { [weak self] transaction in
+            .execute { [weak self] transaction, error in
                 guard let result = transaction,
                     let threeDSecure = result.threeDSecure else {
                     completion?(false)
@@ -68,7 +68,7 @@ public class CreditCardData: Credit, CardData {
     }
 
     public func verifySignature(authorizationResponse: String,
-                                amount: Decimal? = nil,
+                                amount: NSDecimalNumber? = nil,
                                 currency: String,
                                 orderId: String,
                                 completion: ((Bool) -> Void)?) {
@@ -97,7 +97,7 @@ public class CreditCardData: Credit, CardData {
             .withCurrency(threeDSecure?.currency)
             .withPayerAuthenticationResponse(authorizationResponse)
             .withPaymentMethod(TransactionReference(orderId: threeDSecure?.orderId))
-            .execute { [weak self] transaction in
+            .execute { [weak self] transaction, _ in
 
                 self?.threeDSecure?.status = transaction?.threeDSecure?.status
                 self?.threeDSecure?.cavv = transaction?.threeDSecure?.cavv

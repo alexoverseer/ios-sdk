@@ -1,17 +1,17 @@
 import Foundation
 
 /// Configuration for connecting to a payment gateway
-public class ServiceConfig {
+public class ServicesConfig {
     /// Connection details for your processing gateway
     public var gatewayConfig: GatewayConfig?
 
-    public var timeout: Int = .zero {
+    public var timeout: TimeInterval = .zero {
         didSet(newValue) {
             gatewayConfig?.timeout = newValue
         }
     }
 
-    func validate() {
-        gatewayConfig?.validate()
+    func validate() throws {
+        try gatewayConfig?.validate()
     }
 }
