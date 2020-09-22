@@ -32,7 +32,9 @@ class GpApiDebitTests: XCTestCase {
             .execute { transaction, error in
                 transactionResponse = transaction
                 transactionError = error
-                transactionStatusResponse = TransactionStatus(rawValue: transaction!.responseMessage!)
+                if let responseMessage = transaction?.responseMessage {
+                    transactionStatusResponse = TransactionStatus(rawValue: responseMessage)
+                }
                 trackChargeExpectation.fulfill()
         }
 
@@ -62,7 +64,9 @@ class GpApiDebitTests: XCTestCase {
             .execute { transaction, error in
                 transactionResponse = transaction
                 transactionError = error
-                transactionStatusResponse = TransactionStatus(rawValue: transaction!.responseMessage!)
+                if let responseMessage = transaction?.responseMessage {
+                    transactionStatusResponse = TransactionStatus(rawValue: responseMessage)
+                }
                 debitRefundExpectation.fulfill()
         }
 
@@ -72,6 +76,64 @@ class GpApiDebitTests: XCTestCase {
         XCTAssertNil(transactionError)
         XCTAssertEqual(transactionResponse?.responseCode, "SUCCESS")
         XCTAssertEqual(transactionStatusResponse, TransactionStatus.captured)
+    }
+
+    func test_debit_reverse() {
+        // GIVEN
+        let debitReverseExpectation = expectation(description: "Debit Reverse Expectation")
+        let track = DebitTrackData()
+        track.value = "%B4012002000060016^VI TEST CREDIT^251210118039000000000396?;4012002000060016=25121011803939600000?"
+        track.pinBlock = "32539F50C245A6A93D123412324000AA"
+        track.entryMethod = .swipe
+        var transactionResponse: Transaction?
+        var transactionError: Error?
+        var transactionStatusResponse: TransactionStatus?
+
+        // WHEN
+        track.charge(amount: 4.99)
+            .withCurrency("USD")
+            .withAllowDuplicates(true)
+            .execute { transaction, error in
+                transactionResponse = transaction
+                transactionError = error
+                if let responseMessage = transaction?.responseMessage {
+                    transactionStatusResponse = TransactionStatus(rawValue: responseMessage)
+                }
+                debitReverseExpectation.fulfill()
+        }
+
+        // THEN
+        wait(for: [debitReverseExpectation], timeout: 10.0)
+        XCTAssertNotNil(transactionResponse)
+        XCTAssertNil(transactionError)
+        XCTAssertEqual(transactionResponse?.responseCode, "SUCCESS")
+        XCTAssertEqual(transactionStatusResponse, TransactionStatus.captured)
+
+        // GIVEN
+        let reverseExpectation = expectation(description: "reverse Expectation")
+        var reverseTransactionResponse: Transaction?
+        var reverseTransactionError: Error?
+        var reverseTransactionStatusResponse: TransactionStatus?
+
+        // WHEN
+        transactionResponse?
+            .reverse(amount: 4.99)
+            .withCurrency("USD")
+            .execute { transaction, error in
+                reverseTransactionResponse = transaction
+                reverseTransactionError = error
+                if let responseMessage = transaction?.responseMessage {
+                    reverseTransactionStatusResponse = TransactionStatus(rawValue: responseMessage)
+                }
+                reverseExpectation.fulfill()
+        }
+
+        // THEN
+        wait(for: [reverseExpectation], timeout: 10.0)
+        XCTAssertNotNil(reverseTransactionResponse)
+        XCTAssertNil(reverseTransactionError)
+        XCTAssertEqual(reverseTransactionResponse?.responseCode, "SUCCESS")
+        XCTAssertEqual(reverseTransactionStatusResponse, TransactionStatus.reversed)
     }
 
     func test_debit_sale_swipe_encrypted() {
@@ -93,7 +155,9 @@ class GpApiDebitTests: XCTestCase {
             .execute { transaction, error in
                 transactionResponse = transaction
                 transactionError = error
-                transactionStatusResponse = TransactionStatus(rawValue: transaction!.responseMessage!)
+                if let responseMessage = transaction?.responseMessage {
+                    transactionStatusResponse = TransactionStatus(rawValue: responseMessage)
+                }
                 debitSaleExpectation.fulfill()
         }
 
@@ -125,7 +189,9 @@ class GpApiDebitTests: XCTestCase {
             .execute { transaction, error in
                 transactionResponse = transaction
                 transactionError = error
-                transactionStatusResponse = TransactionStatus(rawValue: transaction!.responseMessage!)
+                if let responseMessage = transaction?.responseMessage {
+                    transactionStatusResponse = TransactionStatus(rawValue: responseMessage)
+                }
                 debitSaleExpectation.fulfill()
         }
 
@@ -157,7 +223,9 @@ class GpApiDebitTests: XCTestCase {
             .execute { transaction, error in
                 transactionResponse = transaction
                 transactionError = error
-                transactionStatusResponse = TransactionStatus(rawValue: transaction!.responseMessage!)
+                if let responseMessage = transaction?.responseMessage {
+                    transactionStatusResponse = TransactionStatus(rawValue: responseMessage)
+                }
                 debitSaleExpectation.fulfill()
         }
 

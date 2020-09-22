@@ -72,7 +72,7 @@ import Foundation
     /// Sets the Multicapture value as true/false.
     /// - Parameters:
     /// - Returns: ManagementBuilder
-    public func withMultiCapture(sequence: Int = 1, paymentCount: Int = 1) -> ManagementBuilder {
+    public func withMultiCapture(sequence: Int? = 1, paymentCount: Int? = 1) -> ManagementBuilder {
         self.multiCapture = true
         self.multiCaptureSequence = sequence
         self.multiCapturePaymentCount = paymentCount
@@ -185,8 +185,8 @@ import Foundation
             do {
                 try ServicesContainer.shared
                     .client(configName: configName)
-                    .manageTransaction(self, completion: { transaction in
-                        completion?(transaction, nil)
+                    .manageTransaction(self, completion: { transaction, error in
+                        completion?(transaction, error)
                     })
             } catch {
                 completion?(nil, error)
