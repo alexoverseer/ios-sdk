@@ -32,7 +32,6 @@ public enum SearchCriteria: String {
     case invoiceNumber
     case issuerResult
     case issuerTransactionId
-    case maskedCardNumber
     case oneTime
     case paymentMethodKey
     case referenceNumber
@@ -40,9 +39,14 @@ public enum SearchCriteria: String {
     case scheduleId
     case siteTrace
     case startDate
-    case transactionStatus
+    case disputeReference
+    case settlementDisputeId
+    case disputeDocumentReference
     case uniqueDeviceId
     case username
+    case name
+    case tokenFirstSix
+    case tokenLastFour
 }
 
 public enum DataServiceCriteria: String {
@@ -53,17 +57,21 @@ public enum DataServiceCriteria: String {
     case cardNumberLastFour
     case caseNumber
     case depositReference
-    case endBatchDate
+    case endAdjustmentDate
     case endDepositDate
+    case endStageDate
     case hierarchy
     case localTransactionEndTime
     case localTransactionStartTime
     case merchantId
     case orderId
-    case startBatchDate
+    case startAdjustmentDate
     case startDepositDate
+    case startStageDate
     case systemHierarchy
     case timezone
+    case country
+    case currency
 }
 
 @objcMembers public class SearchCriteriaBuilder<TResult>: NSObject {
@@ -71,6 +79,7 @@ public enum DataServiceCriteria: String {
 
     var accountName: String?
     var accountNumberLastFour: String?
+    var adjustmentFunding: AdjustmentFunding?
     var altPaymentStatus: String?
     var amount: NSDecimalNumber?
     var aquirerReferenceNumber: String?
@@ -99,9 +108,15 @@ public enum DataServiceCriteria: String {
     var customerId: String?
     var depositReference: String?
     var displayName: String?
+    var disputeReference: String?
+    var disputeStage: DisputeStage?
+    var disputeStatus: DisputeStatus?
+    var disputeDocumentReference: String?
+    var endAdjustmentDate: Date?
     var endBatchDate: Date?
     var endDate: Date?
     var endDepositDate: Date?
+    var endStageDate: Date?
     var fullyCaptured: Bool?
     var giftCurrency: String?
     var giftMaskedAlias: String?
@@ -111,7 +126,6 @@ public enum DataServiceCriteria: String {
     var issuerTransactionId: String?
     var localTransactionEndTime: Date?
     var localTransactionStartTime: Date?
-    var maskedCardNumber: String?
     var merchantId: String?
     var oneTime: Bool?
     var orderId: String?
@@ -120,36 +134,80 @@ public enum DataServiceCriteria: String {
     var referenceNumber: String?
     var transactionType: [TransactionType]?
     var settlementAmount: NSDecimalNumber?
+    var settlementDisputeId: String?
     var scheduleId: String?
     var siteTrace: String?
+    var startAdjustmentDate: Date?
     var startBatchDate: Date?
     var startDate: Date?
     var startDepositDate: Date?
+    var startStageDate: Date?
     var systemHierarchy: String?
     var transactionStatus: TransactionStatus?
     var uniqueDeviceId: String?
     var username: String?
     var timezone: String?
+    var depositStatus: DepositStatus?
+    var channel: Channel?
+    var currency: String?
+    var country: String?
+    var paymentEntryMode: PaymentEntryMode?
+    var name: String?
+    var paymentType: PaymentType?
+    var tokenFirstSix: String?
+    var tokenLastFour: String?
 
     init(reportBuilder: TransactionReportBuilder<TResult>) {
         self.reportBuilder = reportBuilder
     }
 
-    public func and<T>(criteria: SearchCriteria,
-                       value: T) -> SearchCriteriaBuilder<TResult> {
-        setValue(value, for: criteria.rawValue)
+    public func and<T>(searchCriteria: SearchCriteria, value: T) -> SearchCriteriaBuilder<TResult> {
+        setValue(value, for: searchCriteria.rawValue)
         return self
     }
 
-    public func and(criteria: SearchCriteria,
-                    transactionStatus: TransactionStatus) -> SearchCriteriaBuilder<TResult> {
+    public func and<T>(dataServiceCriteria: DataServiceCriteria, value: T) -> SearchCriteriaBuilder<TResult> {
+        setValue(value, for: dataServiceCriteria.rawValue)
+        return self
+    }
+
+    public func and(transactionStatus: TransactionStatus) -> SearchCriteriaBuilder<TResult> {
         self.transactionStatus = transactionStatus
         return self
     }
 
-    public func and<T>(criteria: DataServiceCriteria,
-                       value: T) -> SearchCriteriaBuilder<TResult> {
-        setValue(value, for: criteria.rawValue)
+    public func and(adjustmentFunding: AdjustmentFunding) -> SearchCriteriaBuilder<TResult> {
+        self.adjustmentFunding = adjustmentFunding
+        return self
+    }
+
+    public func and(disputeStage: DisputeStage) -> SearchCriteriaBuilder<TResult> {
+        self.disputeStage = disputeStage
+        return self
+    }
+
+    public func and(disputeStatus: DisputeStatus) -> SearchCriteriaBuilder<TResult> {
+        self.disputeStatus = disputeStatus
+        return self
+    }
+
+    public func and(depositStatus: DepositStatus) -> SearchCriteriaBuilder<TResult> {
+        self.depositStatus = depositStatus
+        return self
+    }
+
+    public func and(channel: Channel) -> SearchCriteriaBuilder<TResult> {
+        self.channel = channel
+        return self
+    }
+
+    public func and(paymentEntryMode: PaymentEntryMode) -> SearchCriteriaBuilder<TResult> {
+        self.paymentEntryMode = paymentEntryMode
+        return self
+    }
+
+    public func and(paymentType: PaymentType) -> SearchCriteriaBuilder<TResult> {
+        self.paymentType = paymentType
         return self
     }
 

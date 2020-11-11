@@ -13,6 +13,7 @@
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
+		8218B1E62521CFD6009DC67A /* GpApiAuthenticationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8218B1E52521CFD6009DC67A /* GpApiAuthenticationTests.swift */; };
 		824451BC24E150410080D06B /* GpApiReportingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 824451BB24E150410080D06B /* GpApiReportingTests.swift */; };
 		824451C124E1801D0080D06B /* GpApiDebitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 824451C024E1801D0080D06B /* GpApiDebitTests.swift */; };
 		824A16EC24E3EA230060944B /* BuilderValidationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 824A16EB24E3EA230060944B /* BuilderValidationTests.swift */; };
@@ -21,6 +22,9 @@
 		82613EBC24FE5D4E006EF5BD /* GpApiTokenManagementTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82613EBB24FE5D4E006EF5BD /* GpApiTokenManagementTests.swift */; };
 		8267BC9824DAB5F100AF64D2 /* GpApiCreditTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8267BC9724DAB5F100AF64D2 /* GpApiCreditTests.swift */; };
 		82B0485824AF367600FC32EC /* CardUtilsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82B0485724AF367600FC32EC /* CardUtilsTests.swift */; };
+		82FAF8DE2535B16E00B10401 /* gp_logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 82FAF8DC2535B16E00B10401 /* gp_logo.png */; };
+		82FAF8DF2535B16E00B10401 /* gp_logo.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 82FAF8DD2535B16E00B10401 /* gp_logo.pdf */; };
+		82FAF8E42535B2B500B10401 /* ResouceLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82FAF8E32535B2B500B10401 /* ResouceLoader.swift */; };
 		B3C3C7004F930D956F772A64 /* Pods_GlobalPayments_iOS_SDK_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 650520B915FF8897EC1F1768 /* Pods_GlobalPayments_iOS_SDK_Example.framework */; };
 /* End PBXBuildFile section */
 
@@ -51,6 +55,7 @@
 		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		650520B915FF8897EC1F1768 /* Pods_GlobalPayments_iOS_SDK_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_GlobalPayments_iOS_SDK_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6553D79D618AA4E0206C383D /* Pods_GlobalPayments_iOS_SDK_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_GlobalPayments_iOS_SDK_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8218B1E52521CFD6009DC67A /* GpApiAuthenticationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GpApiAuthenticationTests.swift; sourceTree = "<group>"; };
 		824451BB24E150410080D06B /* GpApiReportingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GpApiReportingTests.swift; sourceTree = "<group>"; };
 		824451C024E1801D0080D06B /* GpApiDebitTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GpApiDebitTests.swift; sourceTree = "<group>"; };
 		824A16EB24E3EA230060944B /* BuilderValidationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuilderValidationTests.swift; sourceTree = "<group>"; };
@@ -59,6 +64,9 @@
 		82613EBB24FE5D4E006EF5BD /* GpApiTokenManagementTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GpApiTokenManagementTests.swift; sourceTree = "<group>"; };
 		8267BC9724DAB5F100AF64D2 /* GpApiCreditTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GpApiCreditTests.swift; sourceTree = "<group>"; };
 		82B0485724AF367600FC32EC /* CardUtilsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardUtilsTests.swift; sourceTree = "<group>"; };
+		82FAF8DC2535B16E00B10401 /* gp_logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = gp_logo.png; sourceTree = "<group>"; };
+		82FAF8DD2535B16E00B10401 /* gp_logo.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = gp_logo.pdf; sourceTree = "<group>"; };
+		82FAF8E32535B2B500B10401 /* ResouceLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResouceLoader.swift; sourceTree = "<group>"; };
 		866C760D426DC19D7E0BA8F6 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		A3321008DB1409EE8F482E4A /* Pods-GlobalPayments-iOS-SDK_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GlobalPayments-iOS-SDK_Tests.release.xcconfig"; path = "Target Support Files/Pods-GlobalPayments-iOS-SDK_Tests/Pods-GlobalPayments-iOS-SDK_Tests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -144,6 +152,7 @@
 				8267BC9624DAB5B700AF64D2 /* GpApi */,
 				607FACE91AFB9204008FA782 /* Supporting Files */,
 				82B0485624AF366700FC32EC /* UtilsTests */,
+				82FAF8E22535B2A700B10401 /* Utils */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -151,6 +160,7 @@
 		607FACE91AFB9204008FA782 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				82FAF8DB2535B14600B10401 /* Resources */,
 				607FACEA1AFB9204008FA782 /* Info.plist */,
 			);
 			name = "Supporting Files";
@@ -174,6 +184,7 @@
 				824451BB24E150410080D06B /* GpApiReportingTests.swift */,
 				8252038B24E2A72000784248 /* GpApiEbtTests.swift */,
 				82613EBB24FE5D4E006EF5BD /* GpApiTokenManagementTests.swift */,
+				8218B1E52521CFD6009DC67A /* GpApiAuthenticationTests.swift */,
 			);
 			path = GpApi;
 			sourceTree = "<group>";
@@ -185,6 +196,23 @@
 				8252038D24E2C15600784248 /* CountryUtilsTests.swift */,
 			);
 			path = UtilsTests;
+			sourceTree = "<group>";
+		};
+		82FAF8DB2535B14600B10401 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				82FAF8DD2535B16E00B10401 /* gp_logo.pdf */,
+				82FAF8DC2535B16E00B10401 /* gp_logo.png */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		82FAF8E22535B2A700B10401 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				82FAF8E32535B2B500B10401 /* ResouceLoader.swift */,
+			);
+			path = Utils;
 			sourceTree = "<group>";
 		};
 		D96F282A842265BC4AB41241 /* Frameworks */ = {
@@ -245,7 +273,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0830;
-				LastUpgradeCheck = 1130;
+				LastUpgradeCheck = 1200;
 				ORGANIZATIONNAME = CocoaPods;
 				TargetAttributes = {
 					607FACCF1AFB9204008FA782 = {
@@ -293,6 +321,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				82FAF8DE2535B16E00B10401 /* gp_logo.png in Resources */,
+				82FAF8DF2535B16E00B10401 /* gp_logo.pdf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -396,9 +426,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				824451C124E1801D0080D06B /* GpApiDebitTests.swift in Sources */,
+				82FAF8E42535B2B500B10401 /* ResouceLoader.swift in Sources */,
 				8252038C24E2A72000784248 /* GpApiEbtTests.swift in Sources */,
 				82B0485824AF367600FC32EC /* CardUtilsTests.swift in Sources */,
 				824451BC24E150410080D06B /* GpApiReportingTests.swift in Sources */,
+				8218B1E62521CFD6009DC67A /* GpApiAuthenticationTests.swift in Sources */,
 				82613EBC24FE5D4E006EF5BD /* GpApiTokenManagementTests.swift in Sources */,
 				8252038E24E2C15600784248 /* CountryUtilsTests.swift in Sources */,
 				824A16EC24E3EA230060944B /* BuilderValidationTests.swift in Sources */,
@@ -459,6 +491,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -484,7 +517,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -515,6 +548,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -533,7 +567,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -547,6 +581,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = "GlobalPayments-iOS-SDK/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
@@ -562,6 +597,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = "GlobalPayments-iOS-SDK/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";

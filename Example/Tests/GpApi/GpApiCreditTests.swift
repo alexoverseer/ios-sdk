@@ -4,7 +4,17 @@ import GlobalPayments_iOS_SDK
 class GpApiCreditTests: XCTestCase {
     var card: CreditCardData!
 
-    override func setUpWithError() throws {
+    override class func setUp() {
+        super.setUp()
+
+        try? ServicesContainer.configureService(config: GpApiConfig (
+            appId: "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
+            appKey: "QDsW1ETQKHX6Y4TA",
+            channel: .cardNotPresent
+        ))
+    }
+
+    override func setUp() {
         super.setUp()
 
         card = CreditCardData()
@@ -12,14 +22,6 @@ class GpApiCreditTests: XCTestCase {
         card.expMonth = 5
         card.expYear = 2025
         card.cvn = "852"
-
-        let config = GpApiConfig (
-            appId: "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
-            appKey: "QDsW1ETQKHX6Y4TA",
-            channel: .cardNotPresent
-        )
-
-        try ServicesContainer.configureService(config: config)
     }
 
     override func tearDown() {
@@ -46,7 +48,7 @@ class GpApiCreditTests: XCTestCase {
                     transactionStatusResponse = TransactionStatus(rawValue: responseMessage)
                 }
                 cardExecuteExpectation.fulfill()
-        }
+            }
 
         // THEN
         wait(for: [cardExecuteExpectation], timeout: 10.0)
@@ -105,7 +107,7 @@ class GpApiCreditTests: XCTestCase {
                     transactionStatusResponse = TransactionStatus(rawValue: responseMessage)
                 }
                 executeExpectation.fulfill()
-        }
+            }
 
         // THEN
         wait(for: [executeExpectation], timeout: 10.0)
@@ -175,7 +177,7 @@ class GpApiCreditTests: XCTestCase {
                     transactionStatusResponse = TransactionStatus(rawValue: responseMessage)
                 }
                 executeExpectation.fulfill()
-        }
+            }
 
         // THEN
         wait(for: [executeExpectation], timeout: 10.0)
@@ -203,7 +205,7 @@ class GpApiCreditTests: XCTestCase {
                     transactionStatus = TransactionStatus(rawValue: responseMessage)
                 }
                 transactionExecuteExpectation.fulfill()
-        }
+            }
 
         // THEN
         wait(for: [transactionExecuteExpectation], timeout: 10.0)
@@ -256,7 +258,7 @@ class GpApiCreditTests: XCTestCase {
                     transactionStatus = TransactionStatus(rawValue: responseMessage)
                 }
                 transactionExpectation.fulfill()
-        }
+            }
 
         // THEN
         wait(for: [transactionExpectation], timeout: 10.0)
@@ -281,7 +283,7 @@ class GpApiCreditTests: XCTestCase {
                     statusResponse = TransactionStatus(rawValue: responseMessage)
                 }
                 reverseExpectation.fulfill()
-        }
+            }
 
         // THEN
         wait(for: [reverseExpectation], timeout: 10.0)
@@ -303,13 +305,13 @@ class GpApiCreditTests: XCTestCase {
             .withCurrency("USD")
             .withAllowDuplicates(true)
             .execute { transaction, error in
-            transactionResponse = transaction
-            transactionError = error
-            if let responseMessage = transaction?.responseMessage {
-                transactionStatus = TransactionStatus(rawValue: responseMessage)
+                transactionResponse = transaction
+                transactionError = error
+                if let responseMessage = transaction?.responseMessage {
+                    transactionStatus = TransactionStatus(rawValue: responseMessage)
+                }
+                transactionExpectation.fulfill()
             }
-            transactionExpectation.fulfill()
-        }
 
         // THEN
         wait(for: [transactionExpectation], timeout: 10.0)
@@ -332,7 +334,7 @@ class GpApiCreditTests: XCTestCase {
                     failedError = error
                 }
                 errorExpectation.fulfill()
-        }
+            }
 
         // THEN
         wait(for: [errorExpectation], timeout: 10.0)
@@ -362,7 +364,7 @@ class GpApiCreditTests: XCTestCase {
                     statusResponse = TransactionStatus(rawValue: responseMessage)
                 }
                 transactionExpectation.fulfill()
-        }
+            }
 
         // THEN
         wait(for: [transactionExpectation], timeout: 10.0)
@@ -388,7 +390,7 @@ class GpApiCreditTests: XCTestCase {
                 }
                 capture1Expectation.fulfill()
             }
-        )
+            )
 
         // THEN
         wait(for: [capture1Expectation], timeout: 10.0)
@@ -414,7 +416,7 @@ class GpApiCreditTests: XCTestCase {
                 }
                 capture2Expectation.fulfill()
             }
-        )
+            )
 
         // THEN
         wait(for: [capture2Expectation], timeout: 10.0)
@@ -440,7 +442,7 @@ class GpApiCreditTests: XCTestCase {
                 }
                 capture3Expectation.fulfill()
             }
-        )
+            )
 
         // THEN
         wait(for: [capture3Expectation], timeout: 10.0)
@@ -448,5 +450,81 @@ class GpApiCreditTests: XCTestCase {
         XCTAssertNil(capture3Error)
         XCTAssertEqual(capture3Response?.responseCode, "SUCCESS")
         XCTAssertEqual(capture3StatusResponse, TransactionStatus.captured)
+    }
+
+    func test_credit_verify() {
+        // GIVEN
+        let verifyExpectation = expectation(description: "Verify Expectation")
+        var transactionResult: Transaction?
+        var transactionError: Error?
+
+        // WHEN
+        card?.verify()
+            .withCurrency("USD")
+            .execute(completion: { transaction, error in
+                transactionResult = transaction
+                transactionError = error
+                verifyExpectation.fulfill()
+            })
+
+        // THEN
+        wait(for: [verifyExpectation], timeout: 10.0)
+        XCTAssertNil(transactionError)
+        XCTAssertNotNil(transactionResult)
+        XCTAssertEqual(transactionResult?.responseCode, "SUCCESS")
+        XCTAssertEqual(transactionResult?.responseMessage, "VERIFIED")
+    }
+
+    func test_credit_charge_transactions_with_same_idempotency_key() {
+        // GIVEN
+        let idempotencyExpectation = expectation(description: "Idempotency Expectation")
+        let idempotencyKey = UUID().uuidString
+        var transactionResult: Transaction?
+        var transactionError: Error?
+        var transactionStatus: TransactionStatus?
+
+        // WHEN
+        card.charge(amount: 4.95)
+            .withIdempotencyKey(idempotencyKey)
+            .withCurrency("USD")
+            .execute(completion: {
+                transactionResult = $0
+                transactionError = $1
+                if let responseMessage = $0?.responseMessage {
+                    transactionStatus = TransactionStatus(rawValue: responseMessage)
+                }
+                idempotencyExpectation.fulfill()
+            })
+
+        // THEN
+        wait(for: [idempotencyExpectation], timeout: 10.0)
+        XCTAssertNil(transactionError)
+        XCTAssertNotNil(transactionResult)
+        XCTAssertEqual(transactionResult?.responseCode, "SUCCESS")
+        XCTAssertEqual(transactionStatus, TransactionStatus.captured)
+
+        // GIVEN
+        let dublicateExpectation = expectation(description: "Dublicate Idempotency Expectation")
+        var dublicateTransaction: Transaction?
+        var gatewayException: GatewayException?
+
+        // WHEN
+        card.charge(amount: 4.95)
+            .withCurrency("USD")
+            .withIdempotencyKey(idempotencyKey)
+            .execute {
+                dublicateTransaction = $0
+                if let error = $1 as? GatewayException {
+                    gatewayException = error
+                }
+                dublicateExpectation.fulfill()
+            }
+
+        // THEN
+        wait(for: [dublicateExpectation], timeout: 10.0)
+        XCTAssertNil(dublicateTransaction)
+        XCTAssertNotNil(gatewayException)
+        XCTAssertEqual(gatewayException?.responseCode, "DUPLICATE_ACTION")
+        XCTAssertEqual(gatewayException?.responseMessage, "40039")
     }
 }

@@ -6,15 +6,19 @@ class GpApiTokenManagementTests: XCTestCase {
     private var card: CreditCardData?
     private var token: String?
 
-    override func setUpWithError() throws {
-        try super.setUpWithError()
+    override class func setUp() {
+        super.setUp()
 
-        try ServicesContainer.configureService(config:
+        try? ServicesContainer.configureService(config:
             GpApiConfig(
                 appId: "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
                 appKey: "QDsW1ETQKHX6Y4TA"
             )
         )
+    }
+
+    override func setUp() {
+        super.setUp()
 
         card = CreditCardData()
         card?.number = "4111111111111111"
@@ -29,11 +33,11 @@ class GpApiTokenManagementTests: XCTestCase {
             tokenizeExpectation.fulfill()
         })
 
-        wait(for: [tokenizeExpectation], timeout: 10.0)
+        wait(for: [tokenizeExpectation], timeout: 20.0)
     }
 
-    override func tearDownWithError() throws {
-        try super.tearDownWithError()
+    override func tearDown() {
+        super.tearDown()
 
         let tokenizedCard = CreditCardData()
         tokenizedCard.token = token
@@ -45,7 +49,7 @@ class GpApiTokenManagementTests: XCTestCase {
             tokenizeExpectation.fulfill()
         }
 
-        wait(for: [tokenizeExpectation], timeout: 10.0)
+        wait(for: [tokenizeExpectation], timeout: 20.0)
 
         tokenizedCard.verify()
             .execute { transaction, error in
