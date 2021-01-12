@@ -163,12 +163,23 @@ extension GpApiConnector {
             if let creditCardData = builder.paymentMethod as? CreditCardData {
                 paymentMethod.set(for: "name", value: creditCardData.cardHolderName)
 
-                if let secureEcom = creditCardData.threeDSecure {
-                    let authentication = JsonDoc()
-                        .set(for: "xid", value: secureEcom.xid)
-                        .set(for: "cavv", value: secureEcom.cavv)
-                        .set(for: "eci", value: String(secureEcom.eci ?? .zero))
-                    //                    .set(for: "mac", value: "") //A message authentication code submitted to confirm integrity of the request.
+                if let secureEcom = creditCardData.threeDSecure,
+                   let eci = secureEcom.eci {
+                    let threeDs = JsonDoc()
+                        // Indicates the version of 3DS
+                        .set(for: "message_version", value: "\(secureEcom.version)")
+                        // An indication of the degree of the authentication and liability shift obtained for this transaction.
+                        // It is determined during the 3D Secure process.
+                        .set(for: "eci", value: "\(eci)")
+                        // The authentication value created as part of the 3D Secure process.
+                        .set(for: "value", value: secureEcom.authenticationValue)
+                        // The reference created by the 3DSecure provider to identify the specific authentication attempt.
+                        .set(for: "server_trans_ref", value: secureEcom.serverTransactionId)
+                        // The reference created by the 3DSecure Directory Server to identify the specific authentication attempt.
+                        .set(for: "ds_trans_ref", value: secureEcom.directoryServerTransactionId)
+
+                    let authentication = JsonDoc().set(for: "three_ds", doc: threeDs)
+
                     paymentMethod.set(for: "authentication", doc: authentication)
                 }
             }
@@ -208,7 +219,6 @@ extension GpApiConnector {
                 .set(for: "reference", value: builder.clientTransactionId ?? UUID().uuidString)
                 .set(for: "description", value: builder.requestDescription)
                 .set(for: "order_reference", value: builder.orderId)
-                //            .set(for: "initiator", value: "")// [PAYER, MERCHANT] //default to PAYER
                 .set(for: "gratuity_amount", value: builder.gratuity?.toNumericCurrencyString())
                 .set(for: "cashback_amount", value: builder.cashBackAmount?.toNumericCurrencyString())
                 .set(for: "surcharge_amount", value: builder.surchargeAmount?.toNumericCurrencyString())
@@ -218,6 +228,15 @@ extension GpApiConnector {
                 .set(for: "ip_address", value: builder.customerIpAddress)
                 //            .set(for: "site_reference", value: "")
                 .set(for: "payment_method", doc: paymentMethod)
+
+            if let storedCredential = builder.storedCredential {
+                data.set(for: "initiator", value: builder.storedCredential?.initiator.mapped(for: .gpApi))
+                let storedCredential = JsonDoc()
+                    .set(for: "model", value: storedCredential.type.mapped(for: .gpApi))
+                    .set(for: "reason", value: storedCredential.reason.mapped(for: .gpApi))
+                    .set(for: "sequence", value: storedCredential.sequence.mapped(for: .gpApi))
+                data.set(for: "stored_credential", doc: storedCredential)
+            }
 
             self?.doTransaction(method: .post,
                                 endpoint: Endpoints.transactions(),

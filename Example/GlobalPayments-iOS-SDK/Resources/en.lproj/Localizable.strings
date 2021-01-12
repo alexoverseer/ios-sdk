@@ -9,6 +9,7 @@
 "gateways.realex.title" = "Realex";
 
 "globalpay.title" = "GP API";
+"globalpay.container.failure" = "Oops!, looks like there is an error setting up the container. Check the error below: \n%@";
 "globalpay.access.token.title" = "Access Token";
 "globalpay.transactions.title" = "Transactions";
 "globalpay.verifications.title" = "Verifications";
@@ -171,3 +172,152 @@
 "payment.operation.form.expiry.month" = "Expiry Month:";
 "payment.operation.form.expiry.year" = "Expiry Year:";
 "payment.operation.form.cvn" = "CVN/CVV:";
+
+"deposits.title" = "Deposits";
+"deposits.get.deposits.list" = "Get Deposits List";
+"deposits.get.deposit.by.id" = "Get Deposit By ID";
+"deposits.id" = "ID:";
+"deposits.time.created" = "Time Created:";
+"deposits.status" = "Status:";
+"deposits.funding.type" = "Funding Type:";
+"deposits.amount" = "Amount:";
+"deposits.currency" = "Currency:";
+"deposits.mid" = "Merchant ID:";
+"deposits.hierarchy" = "Hierarchy:";
+"deposits.name" = "Name:";
+"deposits.dbo" = "Alternative Name:";
+"deposits.sales.count" = "Sales Count:";
+"deposits.sales.amount" = "Sales Amount:";
+"deposits.refunds.count" = "Refunds Count:";
+"deposits.refunds.amount" = "Refunds Amount:";
+"deposits.discounts.amount" = "Discounts Amount:";
+"deposits.discounts.count" = "Discounts Count:";
+"deposits.tax.amount" = "Tax Amount:";
+"deposits.tax.count" = "Tax Count:";
+"deposits.chargebacks.amount" = "Chargebacks Amount:";
+"deposits.chargebacks.count" = "Сhargebacks Сount:";
+"deposits.reversals.amount" = "Reversals Amount:";
+"deposits.reversals.count" = "Reversals Count:";
+"deposits.fees.amount" = "Fees Amount:";
+
+"deposits.deposit.by.id.form.title" = "Find Deposit By ID Form";
+"deposits.deposit.by.id.form.description" = "Report Parameters";
+"deposits.deposit.by.id.form.submit" = "Submit";
+
+"deposits.list.form.title" = "Find Deposits By Criteria";
+"deposits.list.form.submit" = "Submit";
+"deposits.list.form.page" = "Page:";
+"deposits.list.form.page.size" = "Page Size:";
+"deposits.list.form.order.by" = "Order By:";
+"deposits.list.form.order" = "Order:";
+"deposits.list.form.account.name" = "Account Name:";
+"deposits.list.form.from.time.created" = "From Time Created:";
+"deposits.list.form.id" = "ID:";
+"deposits.list.form.status" = "Status:";
+"deposits.list.form.to.time.created" = "To Time Created:";
+"deposits.list.form.amount" = "Amount:";
+"deposits.list.form.masked.number" = "Mascked Account Number Last 4:";
+"deposits.list.form.system.mid" = "System MID:";
+"deposits.list.form.system.hierarchy" = "System Hierarchy:";
+
+"disputes.title" = "Disputes";
+"disputes.report.title" = "Disputes Report";
+"disputes.operations.title" = "Disputes Operations";
+
+"disputes.report.dispute.list" = "Get Disputes List";
+"disputes.report.dispute.by.id" = "Get Dispute By ID";
+"disputes.report.document.by.id" = "Get Document By ID";
+"disputes.report.document.id" = "ID:";
+"disputes.report.document.time.created" = "Time Created:";
+"disputes.report.document.status" = "Status:";
+"disputes.report.document.stage" = "Stage:";
+"disputes.report.document.amount" = "Amount:";
+"disputes.report.document.currency" = "Currency:";
+"disputes.report.document.mid" = "Merchant ID:";
+"disputes.report.document.merchant.hierarchy" = "Merchant Hierarchy:";
+"disputes.report.document.arn" = "Tranasction ARN;";
+"disputes.report.document.reference.number" = "Transaction Reference Number:";
+"disputes.report.document.auth.code" = "Transaction Auth Code:";
+"disputes.report.document.card.type" = "Transaction Card Type:";
+"disputes.report.document.masked.number" = "Transaction Masked Card Number:";
+"disputes.report.document.reason" = "Reason:";
+"disputes.report.document.reason.code" = "Reason Code:";
+"disputes.report.document.time.end" = "Respond By Date:";
+"disputes.report.document.documents" = "Documents:";
+"disputes.report.document.more" = "more...";
+"disputes.report.document.last.adjustment.funding" = "Last Adjustment Funding:";
+"disputes.report.document.last.adjustment.amount" = "Last Adjustment Amount:";
+"disputes.report.document.last.adjustment.currency" = "Last Adjustment Currency:";
+"disputes.report.document.last.adjustment.time" = "Last Adjustment Time:";
+"disputes.report.document.result" = "Result:";
+
+"dispute.document.form.title" = "Document Parameters";
+"dispute.document.form.submit" = "Submit";
+"dispute.document.form.dispute.id" = "Dispute ID:";
+"dispute.document.form.document.id" = "Document ID:";
+
+"dispute.by.id.title" = "Report Parameters";
+"dispute.by.id" = "Dispute ID:";
+"dispute.by.id.settlements" = "Get from settlements ?";
+"dispute.by.id.submit" = "Submit";
+
+"dispute.document.title" = "Documents";
+
+"dispute.list.form.title" = "Disputes Parameters";
+"dispute.list.form.submit" = "Submit";
+"dispute.list.form.page" = "Page:";
+"dispute.list.form.page.size" = "Page Size:";
+"dispute.list.form.order.by" = "Order By:";
+"dispute.list.form.order" = "Order:";
+"dispute.list.form.arn" = "ARN:";
+"dispute.list.form.brand" = "Brand:";
+"dispute.list.form.status" = "Status:";
+"dispute.list.form.stage" = "Stage:";
+"dispute.list.form.from.stage.time.created" = "From Stage Time Created:";
+"dispute.list.form.to.stage.time.created" = "To Stage Time Created:";
+"dispute.list.form.adjustment.funding" = "Adjustment Funding:";
+"dispute.list.form.from.adjustment.time.created" = "From Adjustment Time Created:";
+"dispute.list.form.to.adjustment.time.created" = "To Adjustment Time Created:";
+"dispute.list.form.system.mid" = "System MID:";
+"dispute.list.form.system.hierarchy" = "System Hierarchy:";
+"dispute.list.form.settlements" = "Get from Settlements?";
+
+"disputes.operations.title" = "Dispute Operations";
+"disputes.operations.initiate.opearation" = "Initiate Dispute Operation";
+
+"disputes.operations.form.title" = "Operation Parameters";
+"disputes.operations.form.submit" = "Submit";
+"disputes.operations.form.operation.type" = "Operation Type:";
+"disputes.operations.form.dispute.id" = "Dispute ID:";
+"disputes.operations.form.image.not.selected" = "Please select an image!";
+
+"dispute.action.view.reference" = "Reference:";
+"dispute.action.view.status" = "Status:";
+"dispute.action.view.stage" = "Stage:";
+"dispute.action.view.amount" = "Amount:";
+"dispute.action.view.currency" = "Currency:";
+"dispute.action.view.reason.code" = "Reason Code:";
+"dispute.action.view.reason.description" = "Reason Description:";
+"dispute.action.view.reason.result" = "Result:";
+"dispute.action.view.documents" = "Documents:";
+
+"document.picker.view.title" = "Add Document File:";
+"document.picker.view.file" = "Document File:";
+"document.picker.view.select" = "Press to select a file";
+"document.picker.view.type" = "Document Type:";
+"document.picker.view.add" = "Add";
+"document.picker.view.add.document" = "Add Document";
+"document.picker.view.clear" = "Clear & Close";
+
+"configuration.title" = "GP API Configuration";
+"configuration.app.id" = "App ID (required)";
+"configuration.app.key" = "App Key (required)";
+"configuration.seconds.to.expire" = "Seconds To Expire (optional)";
+"configuration.interval.to.expire" = "Interval To Expire (optional)";
+"configuration.channel" = "Channel (required)";
+"configuration.language" = "Language (optional)";
+"configuration.country" = "Country (optional)";
+"configuration.save" = "Save Configuration";
+"configuration.app.id.message" = "Applicatoin ID field is required";
+"configuration.app.key.message" = "Applicatoin Key field is required";
+"configuration.channel.message" = "Channel field is required";
