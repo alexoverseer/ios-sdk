@@ -58,7 +58,7 @@ extension GpApiConnector {
                             method: .post,
                             endpoint: Endpoints.paymentMethods(),
                             data: tokenizationData.toString(),
-                            idempotencyKey: nil) { response, error in
+                            idempotencyKey: builder.idempotencyKey) { response, error in
                             guard let tokenizationResponse = response else {
                                 completion?(nil, error)
                                 return
@@ -110,7 +110,7 @@ extension GpApiConnector {
                                 method: .post,
                                 endpoint: Endpoints.verify(),
                                 data: verificationData.toString(),
-                                idempotencyKey: nil) { response, error in
+                                idempotencyKey: builder.idempotencyKey) { response, error in
                                 guard let tokenizationResponse = response else {
                                     completion?(nil, error)
                                     return

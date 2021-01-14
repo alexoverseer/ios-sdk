@@ -13,7 +13,6 @@ extension GpApiConnector: ReportingServiceType {
 
             var reportUrl: String = .empty
             var queryStringParams = [String: String]()
-            var method: HTTPMethod = .get
 
             func addQueryStringParam(params: inout [String: String], key: String, value: String?) {
                 guard let value = value, !value.isEmpty else { return }
@@ -173,8 +172,20 @@ extension GpApiConnector: ReportingServiceType {
                 }
                 else if builder.reportType == .acceptDispute,
                         let disputeId = builder.searchCriteriaBuilder.disputeReference {
-                    reportUrl = Endpoints.acceptDispute(id: disputeId)
-                    method = .post
+
+                    self?.doTransaction(
+                        method: .post,
+                        endpoint: Endpoints.acceptDispute(id: disputeId),
+                        idempotencyKey: builder.idempotencyKey) { [weak self] response, error in
+                        guard let response = response else {
+                            completion?(nil, error)
+                            return
+                        }
+
+                        completion?(self?.mapReportResponse(response, builder.reportType), nil)
+                        return
+                    }
+                    return
                 }
                 else if builder.reportType == .challangeDispute,
                         let disputeId = builder.searchCriteriaBuilder.disputeReference,
@@ -185,11 +196,7 @@ extension GpApiConnector: ReportingServiceType {
                         method: .post,
                         endpoint: Endpoints.challengeDispute(id: disputeId),
                         data: data,
-                        idempotencyKey: nil) { [weak self] response, error in
-                        if let error = error {
-                            completion?(nil, error)
-                            return
-                        }
+                        idempotencyKey: builder.idempotencyKey) { [weak self] response, error in
                         guard let response = response else {
                             completion?(nil, error)
                             return
@@ -208,7 +215,7 @@ extension GpApiConnector: ReportingServiceType {
             }
 
             self?.doTransaction(
-                method: method,
+                method: .get,
                 endpoint: reportUrl,
                 idempotencyKey: nil,
                 queryStringParams: queryStringParams) { [weak self] response, error in
