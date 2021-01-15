@@ -77,7 +77,7 @@ extension GpApiConnector {
                             self?.doTransaction(
                                 method: .get,
                                 endpoint: Endpoints.paymentMethodsWith(token: token),
-                                idempotencyKey: nil) { response, error in
+                                idempotencyKey: builder.idempotencyKey) { response, error in
                                 guard let tokenizationResponse = response else {
                                     completion?(nil, error)
                                     return
@@ -136,8 +136,8 @@ extension GpApiConnector {
                 if builder.transactionType == .sale || builder.transactionType == .refund {
                     if track.value == nil {
                         card.set(for: "number", value: track.pan)
-                        card.set(for: "expiry_month", value: track.expiry!.substring(with: 2..<4))
-                        card.set(for: "expiry_year", value: track.expiry!.substring(with: 0..<2))
+                        card.set(for: "expiry_month", value: track.expiry?.substring(with: 2..<4))
+                        card.set(for: "expiry_year", value: track.expiry?.substring(with: 0..<2))
                     }
                     card.set(for: "chip_condition", value: builder.emvLastChipRead?.mapped(for: .gpApi))
                     if builder.transactionType == .sale {
