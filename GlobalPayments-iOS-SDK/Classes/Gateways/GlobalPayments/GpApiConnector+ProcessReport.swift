@@ -167,7 +167,6 @@ extension GpApiConnector: ReportingServiceType {
                }
                 else if builder.reportType == .settlementDisputeDetail,
                         let settlementDisputeId = builder.searchCriteriaBuilder.settlementDisputeId {
-                    addQueryStringParam(params: &queryStringParams, key: "account_name", value: self?.dataAccountName)
                     reportUrl = Endpoints.settlementDispute(id: settlementDisputeId)
                 }
                 else if builder.reportType == .acceptDispute,
